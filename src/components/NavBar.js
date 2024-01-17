@@ -1,23 +1,28 @@
 import { IoCartOutline, IoPersonOutline } from "react-icons/io5";
 
-export function NavBar({ cartNumber = 0 }) {
+export function NavBar({ cartNumber = 0, onProfileState }) {
   return (
     <nav className="border py-4 px-5 ">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         {/* logo */}
         <section>
-          <img src="/logo.svg" alt="" className="w-11" />
+          <img
+            src="/logo.svg"
+            alt=""
+            className="w-11 cursor-pointer"
+            onClick={onProfileState}
+          />
         </section>
 
         {/* login and cart */}
 
         <section className="border gap-10 flex items-center">
-          <div>
+          <div onClick={onProfileState}>
             <IoPersonOutline className="text-[27px] cursor-pointer" />
           </div>
           <div className="relative">
             <IoCartOutline className="text-[33px] cursor-pointer" />
-            <p className="bg-red-600 font-medium text-white flex justify-center absolute px-[5px] text-sm items-center rounded-full -bottom-1 right-0">
+            <p className="bg-red-700 font-medium text-white flex justify-center absolute px-[5px] text-[12px] items-center rounded-full -bottom-1 right-0">
               {cartNumber}
             </p>
           </div>
