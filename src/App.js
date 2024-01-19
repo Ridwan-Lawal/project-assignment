@@ -10,14 +10,8 @@ import { AppForms } from "./components/AppForms";
 import { useGetProducts } from "./components/useGetProducts";
 import { Triangle } from "react-loader-spinner";
 
-// map the productsData, create a reusable custom hook for the productsData, create a reusable custom hook for the internatonalizaton api, Also product details, also for the carts6
-
-// local storage for storing cart
-// ref for nav fixed
 // checkout page
-// product detalis
 // login and signup validation
-// create an error and loading state
 
 export default function App() {
   const [isProfile, setIsProfile] = useState(false);
@@ -27,11 +21,11 @@ export default function App() {
     JSON.parse(localStorage.getItem("products"))
   );
   const [isNavFixed, setIsNavFixed] = useState(false);
+  const [productDetails, setProductDetails] = useState("");
 
   // for a fixed nav
   const selectScrollSection = useRef(null);
 
-  console.log(isLoading);
   // Event for the Login profile
   function handleProfileState() {
     setIsProfile((curBool) => !curBool);
@@ -95,7 +89,12 @@ export default function App() {
       )
     );
   }
-  console.log(cart);
+
+  // updataing the product details state to the product that is clicked
+
+  function handleProductDetails(product) {
+    setProductDetails(product);
+  }
 
   // sub total i.e total price for all items in the cart
   const subTotal = cart.reduce(
@@ -144,15 +143,24 @@ export default function App() {
             <AppForms />
           ) : (
             <>
-              {" "}
-              <Banner selectScrollSection={selectScrollSection} />
-              {isLoading && <Loader />}
-              {error && <Error error={error} />}
-              {!isLoading && !error && (
-                <Products
-                  productsData={productsData}
+              {productDetails ? (
+                <ProductDetails
+                  productDetails={productDetails}
                   onAddProductToCart={handleAddProductToCart}
                 />
+              ) : (
+                <>
+                  <Banner selectScrollSection={selectScrollSection} />
+                  {isLoading && <Loader />}
+                  {error && <Error error={error} />}
+                  {!isLoading && !error && (
+                    <Products
+                      productsData={productsData}
+                      onAddProductToCart={handleAddProductToCart}
+                      onProductDetails={handleProductDetails}
+                    />
+                  )}
+                </>
               )}
               <Footer />
             </>
@@ -162,22 +170,22 @@ export default function App() {
         </section>
 
         {/* cart */}
-        <section className="bg-black">
-          <section
-            className={`fixed right-0 shadow-2xl  bg-white ${
-              cartIsOpen ? "w-full sm:w-[60%] md:w-[52%] lg:w-[42%]" : "w-0"
-            } transition-all duration-500 z-20  h-full`}
-          >
-            <Cart
-              onCartOpening={handleCartOpening}
-              cart={cart}
-              onProductQuantityIncrease={handleProductQuantityIncrease}
-              onProductQuantityDecrease={handleProductquantityDecrease}
-              subTotal={subTotal}
-              onDeleteProductFromCart={handleDeleteProductFromCart}
-              onResetCart={handleResetCart}
-            />
-          </section>
+
+        <section
+          className={`fixed right-0 shadow-2xl  bg-white ${
+            cartIsOpen ? "w-full sm:w-[60%] md:w-[52%] lg:w-[42%]" : "w-0"
+          } transition-all duration-500 z-20  h-full`}
+        >
+          <Cart
+            onCartOpening={handleCartOpening}
+            cart={cart}
+            onProductQuantityIncrease={handleProductQuantityIncrease}
+            onProductQuantityDecrease={handleProductquantityDecrease}
+            subTotal={subTotal}
+            onDeleteProductFromCart={handleDeleteProductFromCart}
+            onResetCart={handleResetCart}
+            onProductDetails={handleProductDetails}
+          />
         </section>
       </div>
     </div>
@@ -186,12 +194,12 @@ export default function App() {
 
 function Loader() {
   return (
-    <div className="flex items-center border justify-center">
+    <div className="flex items-center  justify-center">
       <Triangle
         visible={true}
-        height="120"
-        width="120"
-        color="#4fa94d"
+        height="70"
+        width="70"
+        color="darkblue"
         ariaLabel="triangle-loading"
         wrapperStyle={{}}
         wrapperClass=""

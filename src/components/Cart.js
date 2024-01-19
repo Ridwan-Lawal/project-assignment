@@ -16,6 +16,7 @@ export function Cart({
   subTotal,
   onDeleteProductFromCart,
   onResetCart,
+  onProductDetails,
 }) {
   return (
     <div className="pb-8 bg-white ">
@@ -34,6 +35,7 @@ export function Cart({
               key={product.id}
               product={product}
               onDeleteProductFromCart={onDeleteProductFromCart}
+              onProductDetails={onProductDetails}
             >
               <ProductQuantityControl
                 product={product}
@@ -73,7 +75,12 @@ function CartProducts({ children }) {
   );
 }
 // A reusable component for each product in the cart
-function CartProductCard({ product, children, onDeleteProductFromCart }) {
+function CartProductCard({
+  product,
+  children,
+  onDeleteProductFromCart,
+  onProductDetails,
+}) {
   return (
     <div className="flex gap-4 items-center border-b pb-4">
       {/* product image */}
@@ -84,7 +91,10 @@ function CartProductCard({ product, children, onDeleteProductFromCart }) {
       <div className="w-[74%]">
         {/* product name and product delete button  */}
         <section className="flex justify-between gap-4">
-          <p className="text-gray-900 uppercase font-medium">
+          <p
+            onClick={() => onProductDetails(product)}
+            className="text-gray-900 uppercase hover:underline cursor-pointer font-medium"
+          >
             {product?.title}
           </p>
 

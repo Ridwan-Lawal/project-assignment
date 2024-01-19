@@ -1,7 +1,11 @@
 import { IoAdd, IoEye } from "react-icons/io5";
 import { useInternationalization } from "./useInternationalization";
 
-export function Products({ productsData, onAddProductToCart }) {
+export function Products({
+  productsData,
+  onAddProductToCart,
+  onProductDetails,
+}) {
   return (
     <div className="px-8 mt-14">
       <h2 className="text-[32px] text-center font-semibold text-gray-950">
@@ -9,7 +13,11 @@ export function Products({ productsData, onAddProductToCart }) {
       </h2>
       <div className="flex flex-col md:flex-row flex-wrap justify-center mt-11 gap-7">
         {productsData?.map((product) => (
-          <ProductCard key={product.id} product={product}>
+          <ProductCard
+            onProductDetails={onProductDetails}
+            key={product.id}
+            product={product}
+          >
             <Button
               onClick={() => onAddProductToCart(product)}
               bgColor="bg-cyan-500"
@@ -18,7 +26,11 @@ export function Products({ productsData, onAddProductToCart }) {
               <IoAdd className="text-2xl" />
             </Button>
 
-            <Button padding="p-4" bgColor="bg-white">
+            <Button
+              onClick={() => onProductDetails(product)}
+              padding="p-4"
+              bgColor="bg-white"
+            >
               <IoEye className="text-lg" />
             </Button>
           </ProductCard>
@@ -27,7 +39,7 @@ export function Products({ productsData, onAddProductToCart }) {
     </div>
   );
 }
-function ProductCard({ product, children }) {
+function ProductCard({ product, children, onProductDetails }) {
   const priceInNaira = useInternationalization(product?.price);
   return (
     <div className="relative mx-auto group  max-w-[400px] xl:max-w-[350px]">
@@ -43,7 +55,10 @@ function ProductCard({ product, children }) {
       {/* product details */}
       <section className="space-y-1.5 mt-5">
         <p className="text-gray-500">{product?.category}</p>
-        <p className="font-semibold cursor-pointer hover:underline">
+        <p
+          onClick={() => onProductDetails(product)}
+          className="font-semibold cursor-pointer hover:underline"
+        >
           {product?.title}
         </p>
         <p>{priceInNaira}</p>

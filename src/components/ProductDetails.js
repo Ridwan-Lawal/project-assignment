@@ -1,39 +1,38 @@
 import { Button } from "./Button";
+import { useInternationalization } from "./useInternationalization";
 
-export function ProductDetails({
-  imgSrc = "/hero2.png",
-  productName = "Nike Airmax sneakers",
-  productPrice = 22.3,
-}) {
+export function ProductDetails({ productDetails, onAddProductToCart }) {
+  const productPriceInNaira = useInternationalization(productDetails?.price);
   return (
-    <div className="flex mt-8 flex-col max-w-6xl mx-auto lg:flex-row w-full  items-center gap-4 px-8">
+    <div className="flex mt-8 flex-col lg:flex-row w-full  justify-between max-w-5xl mx-auto  items-center gap-4 px-8">
       {/* product image */}
-      <section className=" flex justify-center">
+      <section className="mt-8 flex justify-center">
         <img
-          src={imgSrc}
+          src={productDetails?.image}
           alt="productImage"
-          className="w-[350px] md:w-[380px] lg:w-[450px]"
+          className="w-[200px]  lg:w-[300px]"
         />
       </section>
 
       {/* product name */}
-      <div className="text-center lg:text-left max-w-[540px] mx-auto">
-        <p className="text-[28px] font-medium">{productName}</p>
+      <div className="text-center mt-8  lg:text-left max-w-[540px] ml-auto">
+        <p className="text-[28px] font-medium">{productDetails?.title}</p>
 
         {/* product price */}
         <p className="text-[26px] mt-1.5 font-medium text-red-500">
-          $ {productPrice}
+          {productPriceInNaira}
         </p>
 
         {/* product description */}
         <p className="mt-5 text-[16px] mb-9  lg:text-[17px">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita
-          facilis, eum ipsam tempora quis, asperiores saepe amet corporis
-          deserunt itaque, eligendi doloremque quasi ad rem incidunt vitae
-          nostrum at placeat?
+          {productDetails?.description}
         </p>
 
-        <Button content="Add to Cart" padX="px-8" />
+        <Button
+          onClick={() => onAddProductToCart(productDetails)}
+          content="Add to Cart"
+          padX="px-8"
+        />
       </div>
     </div>
   );
