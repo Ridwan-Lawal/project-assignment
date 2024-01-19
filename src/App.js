@@ -3,7 +3,7 @@ import { Banner } from "./components/Banner";
 import { Products } from "./components/Products";
 import { Footer } from "./components/Footer";
 import { Cart } from "./components/Cart";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "./components/Button";
 import { ProductDetails } from "./components/ProductDetails";
 import { AppForms } from "./components/AppForms";
@@ -26,7 +26,12 @@ export default function App() {
   const [cart, setCart] = useState(() =>
     JSON.parse(localStorage.getItem("products"))
   );
+  const [isNavFixed, setIsNavFixed] = useState(false);
 
+  // for a fixed nav
+  const selectScrollSection = useRef(null);
+
+  console.log(isLoading);
   // Event for the Login profile
   function handleProfileState() {
     setIsProfile((curBool) => !curBool);
@@ -108,6 +113,19 @@ export default function App() {
     [cart]
   );
 
+  // for the manipulation of element in the ref
+  useEffect(function () {
+    const heroSectionCoords =
+      selectScrollSection.current.getBoundingClientRect();
+
+    window.addEventListener("scroll", (e) => {
+      if (window.scrollY > heroSectionCoords.top) setIsNavFixed(true);
+      else setIsNavFixed(false);
+    });
+
+    console.log(heroSectionCoords);
+  }, []);
+
   return (
     <div className="font-poppins">
       <div className="flex">
@@ -117,6 +135,7 @@ export default function App() {
             onProfileState={handleProfileState}
             onCartOpening={handleCartOpening}
             cartNumber={cart?.length}
+            isNavFixed={isNavFixed}
           />
 
           {/* for the profile login */}
@@ -126,7 +145,7 @@ export default function App() {
           ) : (
             <>
               {" "}
-              <Banner />
+              <Banner selectScrollSection={selectScrollSection} />
               {isLoading && <Loader />}
               {error && <Error error={error} />}
               {!isLoading && !error && (
@@ -143,20 +162,22 @@ export default function App() {
         </section>
 
         {/* cart */}
-        <section
-          className={`fixed right-0 shadow-2xl  bg-white ${
-            cartIsOpen ? "w-full sm:w-[60%] md:w-[52%] lg:w-[42%]" : "w-0"
-          } transition-all duration-500  h-full`}
-        >
-          <Cart
-            onCartOpening={handleCartOpening}
-            cart={cart}
-            onProductQuantityIncrease={handleProductQuantityIncrease}
-            onProductQuantityDecrease={handleProductquantityDecrease}
-            subTotal={subTotal}
-            onDeleteProductFromCart={handleDeleteProductFromCart}
-            onResetCart={handleResetCart}
-          />
+        <section className="bg-black">
+          <section
+            className={`fixed right-0 shadow-2xl  bg-white ${
+              cartIsOpen ? "w-full sm:w-[60%] md:w-[52%] lg:w-[42%]" : "w-0"
+            } transition-all duration-500 z-20  h-full`}
+          >
+            <Cart
+              onCartOpening={handleCartOpening}
+              cart={cart}
+              onProductQuantityIncrease={handleProductQuantityIncrease}
+              onProductQuantityDecrease={handleProductquantityDecrease}
+              subTotal={subTotal}
+              onDeleteProductFromCart={handleDeleteProductFromCart}
+              onResetCart={handleResetCart}
+            />
+          </section>
         </section>
       </div>
     </div>
@@ -165,11 +186,11 @@ export default function App() {
 
 function Loader() {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center border justify-center">
       <Triangle
         visible={true}
-        height="80"
-        width="80"
+        height="120"
+        width="120"
         color="#4fa94d"
         ariaLabel="triangle-loading"
         wrapperStyle={{}}

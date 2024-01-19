@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 
-export function Banner() {
+export function Banner({ selectScrollSection }) {
   return (
-    <div className="flex py-12 md:py-14  flex-col md:flex-row md:justify-between md:max-w-6xl px-8 mx-auto items-center">
+    <div
+      ref={selectScrollSection}
+      className="flex py-12 md:py-14  flex-col md:flex-row md:justify-between md:max-w-6xl px-8 mx-auto items-center"
+    >
       {/* hero */}
       <Hero />
 
       {/* banner text section */}
+
+      {/* connected the ref from app.js to the section, so it will be stored in the ref */}
       <section className="mt-14 text-center md:text-left md:order-1">
         <div className="flex justify-center md:justify-start items-center gap-3">
           <p className="border border-blue-950 px-4 h-0 "></p>

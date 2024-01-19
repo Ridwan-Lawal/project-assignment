@@ -11,6 +11,7 @@ export function useGetProducts() {
     async function getProducts() {
       try {
         setIsLoading(true);
+        setError("");
         const res = await fetch("https://fakestoreapi.com/products", {
           signal,
         });
