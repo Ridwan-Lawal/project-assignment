@@ -1,65 +1,68 @@
 import { IoAdd, IoEye } from "react-icons/io5";
+import { useInternationalization } from "./useInternationalization";
 
-export function Products() {
+export function Products({ productsData, onAddProductToCart }) {
   return (
     <div className="px-8 mt-14">
       <h2 className="text-[32px] text-center font-semibold text-gray-950">
         Explore Our Products
       </h2>
-      <div className="flex flex-wrap justify-center mt-11 gap-7">
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
+      <div className="flex flex-col md:flex-row flex-wrap justify-center mt-11 gap-7">
+        {productsData?.map((product) => (
+          <ProductCard key={product.id} product={product}>
+            <Button
+              onClick={() => onAddProductToCart(product)}
+              bgColor="bg-cyan-500"
+              textColor="text-white"
+            >
+              <IoAdd className="text-2xl" />
+            </Button>
+
+            <Button padding="p-4" bgColor="bg-white">
+              <IoEye className="text-lg" />
+            </Button>
+          </ProductCard>
+        ))}
       </div>
     </div>
   );
 }
-function ProductCard({
-  imgSrc = "/hero2.png",
-  productName = "Mens Cotton Jacket",
-  productPrice = 55.99,
-}) {
+function ProductCard({ product, children }) {
+  const priceInNaira = useInternationalization(product?.price);
   return (
-    <div className="relative mx-auto  max-w-[400px] xl:max-w-[350px]">
+    <div className="relative mx-auto group  max-w-[400px] xl:max-w-[350px]">
       {/* product image */}
-      <section className="border border-gray-200 py-16 px-8 group ">
+      <section className="border group h-[300px] border-gray-200 flex items-center justify-center px-8 group ">
         <img
-          src={imgSrc}
+          src={product?.image}
           alt=""
-          className=" group-hover:scale-110 transition-transform duration-300 w-[73%] mx-auto"
+          className=" group-hover:scale-110 transition-transform duration-300 w-[45%] mx-auto"
         />
       </section>
 
       {/* product details */}
       <section className="space-y-1.5 mt-5">
-        <p className="text-gray-500">Men's Clothing</p>
+        <p className="text-gray-500">{product?.category}</p>
         <p className="font-semibold cursor-pointer hover:underline">
-          {productName}
+          {product?.title}
         </p>
-        <p>{productPrice}</p>
+        <p>{priceInNaira}</p>
       </section>
 
       {/* view and add to cart button */}
       {/* w-fit overflow-visible */}
-      <section className="flex top-6 right-6  w-0  flex-col gap-2 overflow-hidden shadow-lg absolute">
-        <Button bgColor="bg-cyan-500" textColor="text-white">
-          <IoAdd className="text-2xl" />
-        </Button>
-
-        <Button padding="p-4" bgColor="bg-white">
-          <IoEye className="text-lg" />
-        </Button>
+      <section className="flex top-6 transition-all group-hover:w-fit right-6  w-0  flex-col gap-2 overflow-hidden shadow-lg absolute">
+        {children}
       </section>
     </div>
   );
 }
-function Button({ children, bgColor, textColor, padding = "p-3.5" }) {
+function Button({ children, bgColor, textColor, padding = "p-3.5", onClick }) {
   return (
-    <button className={` ${padding} ${bgColor} ${textColor} `}>
+    <button
+      onClick={onClick}
+      className={` ${padding} ${bgColor} ${textColor} `}
+    >
       {children}
     </button>
   );
