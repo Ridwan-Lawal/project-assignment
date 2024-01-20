@@ -8,7 +8,10 @@ import { Button } from "./components/Button";
 import { ProductDetails } from "./components/ProductDetails";
 import { AppForms } from "./components/AppForms";
 import { useGetProducts } from "./components/useGetProducts";
-import { Triangle } from "react-loader-spinner";
+import { Loader } from "./components/Loader";
+import { Error } from "./components/Error";
+import { Input } from "./components/Input";
+import { useInternationalization } from "./components/useInternationalization";
 
 // checkout page
 // login and signup validation
@@ -22,6 +25,7 @@ export default function App() {
   );
   const [isNavFixed, setIsNavFixed] = useState(false);
   const [productDetails, setProductDetails] = useState("");
+  const [isCheckOut, setIsCheckout] = useState(false);
 
   // for a fixed nav
   const selectScrollSection = useRef(null);
@@ -96,6 +100,11 @@ export default function App() {
     setProductDetails(product);
   }
 
+  // updating the checkout state
+  function handleCheckout() {
+    setIsCheckout((curBool) => !curBool);
+  }
+
   // sub total i.e total price for all items in the cart
   const subTotal = cart.reduce(
     (acc, curProduct) => acc + curProduct.price * curProduct.quantity,
@@ -143,12 +152,13 @@ export default function App() {
             <AppForms />
           ) : (
             <>
-              {productDetails ? (
+              {productDetails && !isCheckOut && (
                 <ProductDetails
                   productDetails={productDetails}
                   onAddProductToCart={handleAddProductToCart}
                 />
-              ) : (
+              )}
+              {!productDetails && !isCheckOut && (
                 <>
                   <Banner selectScrollSection={selectScrollSection} />
                   {isLoading && <Loader />}
@@ -162,15 +172,15 @@ export default function App() {
                   )}
                 </>
               )}
+              {!productDetails && isCheckOut && (
+                <CheckOut subTotal={subTotal} cartItems={cart.length} />
+              )}
               <Footer />
             </>
           )}
-
-          {/* <ProductDetails /> */}
         </section>
 
         {/* cart */}
-
         <section
           className={`fixed right-0 shadow-2xl  bg-white ${
             cartIsOpen ? "w-full sm:w-[60%] md:w-[52%] lg:w-[42%]" : "w-0"
@@ -185,6 +195,7 @@ export default function App() {
             onDeleteProductFromCart={handleDeleteProductFromCart}
             onResetCart={handleResetCart}
             onProductDetails={handleProductDetails}
+            onCheckout={handleCheckout}
           />
         </section>
       </div>
@@ -192,26 +203,130 @@ export default function App() {
   );
 }
 
-function Loader() {
+function CheckOut({ subTotal, cartItems }) {
   return (
-    <div className="flex items-center  justify-center">
-      <Triangle
-        visible={true}
-        height="70"
-        width="70"
-        color="darkblue"
-        ariaLabel="triangle-loading"
-        wrapperStyle={{}}
-        wrapperClass=""
+    <div className="w-full bg-gray-100 p">
+      <div className=" max-w-xl mx-auto space-y-10">
+        <OrderSummary subTotal={subTotal} cartItems={cartItems} />
+        <CheckOutForm />
+      </div>
+    </div>
+  );
+}
+
+function CheckOutForm() {
+  const [cardHolder, setCardHolder] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cvc, setCvc] = useState("");
+
+  function handleCardNumber(e) {
+    if (!Number.isFinite(+e.target.value)) return;
+    setCardNumber(+e.target.value);
+  }
+
+  function handleExpiryDate(e) {
+    if (!Number.isFinite(+e.target.value)) return;
+    setExpiryDate(+e.target.value);
+  }
+
+  function handleCvc(e) {
+    if (!Number.isFinite(+e.target.value)) return;
+    setCvc(+e.target.value);
+  }
+
+  return (
+    <div className="px-8 py-8 bg-white  w-full shadow-xl">
+      <h1 className="text-2xl  font-semibold text-slate-900">
+        Credit Card Details
+      </h1>
+
+      <form
+        action=""
+        className="border-t mt-2 md:grid md:grid-cols-2 items-center gap-4 max-w-5xl py-4  mx-auto"
+      >
+        <Input
+          inputName="CARD HOLDER"
+          placeholder="Card Holder"
+          value={cardHolder}
+          onChange={(e) => setCardHolder(e.target.value)}
+        />
+        <Input
+          inputName="EXPIRATION DATE"
+          placeholder="Expiration Date"
+          value={expiryDate}
+          onChange={handleExpiryDate}
+        />
+        <Input
+          inputName="CARD NUMBER"
+          placeholder="Card Number"
+          value={cardNumber}
+          onChange={handleCardNumber}
+        />
+
+        <Input
+          inputName="CVC"
+          placeholder="CVC"
+          value={cvc}
+          onChange={handleCvc}
+        />
+
+        <Button
+          width="w-full rounded-md col-span-2"
+          padY="py-2"
+          bgColor="bg-blue-950"
+          content="Proceed Checkout"
+        />
+      </form>
+    </div>
+  );
+}
+
+function OrderSummary({ subTotal, cartItems }) {
+  return (
+    <div className="border py-8 px-8 bg-white shadow-xl">
+      <h1 className="uppercase text-2xl text-slata-900 font-medium">
+        Order summary
+      </h1>
+
+      <div className="font-medium mt-4 space-y-2 border-b-2 border-slate-900 py-5">
+        <OrderSummaryPrice priceType="Subtotal" priceValue={subTotal} />
+        <OrderSummaryPrice priceType="Taxes" priceValue={0} />
+        <OrderSummaryPrice
+          priceType={`Shipping (${cartItems} items)`}
+          priceValue={0}
+        />
+      </div>
+
+      <div className="mt-4 pb-8">
+        <OrderSummaryPrice
+          priceType="Total"
+          priceValue={subTotal}
+          fontSlze="text-2xl"
+        />
+      </div>
+
+      <Button
+        content="APPLY A PROMO CODE OR DISCOUNT"
+        bgColor="bg-white border-2 border-slate-900 hover:bg-slate-900 hover:text-white transition-all rounded-sm"
+        width="w-full"
+        padY="py-2"
+        textColor="text-slate-900"
+        fontSize="text-[15px]"
       />
     </div>
   );
 }
 
-function Error({ error = "Something went wrong" }) {
+function OrderSummaryPrice({
+  priceType = "Shipping({cartItems} items)",
+  priceValue = 0,
+  fontSlze,
+}) {
+  const priceValueInNgn = useInternationalization(priceValue);
   return (
-    <div className="text-center">
-      <p className="text-3xl text-red-700">{error}!</p>
-    </div>
+    <p className={`flex   justify-between ${fontSlze}`}>
+      <span>{priceType}</span> <span>{priceValueInNgn}</span>
+    </p>
   );
 }

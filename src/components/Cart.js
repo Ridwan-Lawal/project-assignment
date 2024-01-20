@@ -17,6 +17,7 @@ export function Cart({
   onDeleteProductFromCart,
   onResetCart,
   onProductDetails,
+  onCheckout,
 }) {
   return (
     <div className="pb-8 bg-white ">
@@ -50,7 +51,7 @@ export function Cart({
           ))}
         </CartProducts>
         <div className="px-6">
-          <CartFooter>
+          <CartFooter onCheckout={onCheckout}>
             <Subtotal subTotal={subTotal} onResetCart={onResetCart} />
           </CartFooter>
         </div>
@@ -146,11 +147,11 @@ function ProductQuantityControl({
     </section>
   );
 }
-function CartFooter({ children }) {
+function CartFooter({ children, onCheckout }) {
   return (
     <footer className="space-y-5 border-t mt-6 pt-5">
       {children}
-      <Button content="Checkout" width="w-full" />
+      <Button content="Checkout" onClick={onCheckout} width="w-full" />
     </footer>
   );
 }

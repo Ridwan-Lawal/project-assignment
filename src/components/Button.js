@@ -1,9 +1,18 @@
 // reusable button
-export function Button({ content = "Button", width, padX, onClick }) {
+export function Button({
+  content = "Button",
+  padY = "py-3",
+  width,
+  padX,
+  bgColor = "bg-slate-900",
+  onClick,
+  textColor = "text-white",
+  fontSize = "text-[17px]",
+}) {
   return (
     <button
       onClick={onClick}
-      className={`bg-slate-900 ${width} ${padX} text-white text-[17px] font-medium py-3`}
+      className={` ${bgColor} ${width} ${padX} ${textColor} ${fontSize} font-medium ${padY}`}
     >
       {content}
     </button>
